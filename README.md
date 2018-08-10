@@ -15,7 +15,17 @@ The `tpqoa` package is intended as a technological illustration only. It comes w
 
 ## Installation
 
-You can install the package via
+Installing from source via `Git` and `Github`:
+
+    git clone https://github.com/yhilpisch/tpqoa
+    cd tpqoa
+    python setup.py install
+    
+Using `pip` in combination with `Github`:
+
+    pip install git+git://github.com/yhilpisch/tpqoa
+
+Using `pip` directly:
 
     pip install --index-url https://test.pypi.org/simple/ tpqoa
 
