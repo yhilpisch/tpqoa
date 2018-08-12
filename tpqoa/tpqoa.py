@@ -143,9 +143,13 @@ class tpqoa(object):
         data: pd.DataFrame
             pandas DataFrame object with data
         '''
-        if granularity.startswith('S'):
+        if granularity.startswith('S') or granularity.startswith('M'):
+            if granularity.startswith('S'):
+                freq = '4h'
+            else:
+                freq = 'D'
             data = pd.DataFrame()
-            dr = pd.date_range(start, end, freq='4h')
+            dr = pd.date_range(start, end, freq=freq)
             for t in range(len(dr) - 1):
                 start = self.transform_datetime(dr[t])
                 end = self.transform_datetime(dr[t + 1])
