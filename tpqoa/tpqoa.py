@@ -80,6 +80,7 @@ class tpqoa(object):
         )
 
         self.suffix = '.000000000Z'
+        self.stop_stream = False
 
     def get_instruments(self):
         ''' Retrieves and returns all instruments for the given account. '''
@@ -207,6 +208,8 @@ class tpqoa(object):
                 if stop is not None:
                     if self.ticks >= stop:
                         break
+            if self.stop_stream:
+                break
 
     def on_success(self, time, bid, ask):
         ''' Method called when new data is retrieved. '''
