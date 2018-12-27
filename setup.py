@@ -11,7 +11,7 @@ with open('README.md', 'r') as f:
       long_description = f.read()
 
 setup(name='tpqoa',
-      version='0.0.43',
+      version='0.0.44',
       description='tpqoa Algorithmic Trading with Oanda',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -20,7 +20,7 @@ setup(name='tpqoa',
       url='http://training.tpq.io',
       packages=['tpqoa'],
       install_requires=[
-          'v20==3.0.18.16',
+          'v20==3.0.25.0',
           'pyyaml'
       ]
       )

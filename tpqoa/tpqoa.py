@@ -66,17 +66,18 @@ class tpqoa(object):
         self.ctx = v20.Context(
             hostname=self.hostname,
             port=443,
-            ssl=True,
-            application='sample_code',
+            #ssl=True,
+            #application='sample_code',
             token=self.access_token,
-            datetime_format='RFC3339')
+            #datetime_format='RFC3339'
+        )
         self.ctx_stream = v20.Context(
             hostname=self.stream_hostname,
             port=443,
-            ssl=True,
-            application='sample_code',
+            #ssl=True,
+            #application='sample_code',
             token=self.access_token,
-            datetime_format='RFC3339'
+            #datetime_format='RFC3339'
         )
 
         self.suffix = '.000000000Z'
@@ -185,7 +186,7 @@ class tpqoa(object):
         order = request.get('orderFillTransaction')
         print('\n\n', order.dict(), '\n')
 
-    def stream_data(self, instrument, stop=None):
+    def stream_data(self, instrument, stop=None, ret=False):
         ''' Starts a real-time data stream.
 
         Parameters
@@ -198,18 +199,25 @@ class tpqoa(object):
         response = self.ctx_stream.pricing.stream(
             self.account_id, snapshot=True,
             instruments=instrument)
+        msgs = []
         for msg_type, msg in response.parts():
+            msgs.append(msg)
             # print(msg_type, msg)
-            if msg_type == 'pricing.Price':
+            if msg_type == 'pricing.ClientPrice':
                 self.ticks += 1
                 self.on_success(msg.time,
-                                float(msg.bids[0].price),
-                                float(msg.asks[0].price))
+                                float(msg.bids[0].dict()['price']),
+                                float(msg.asks[0].dict()['price']))
                 if stop is not None:
                     if self.ticks >= stop:
+                        if ret:
+                            return msgs
                         break
             if self.stop_stream:
+                if ret:
+                    return msgs
                 break
+        
 
     def on_success(self, time, bid, ask):
         ''' Method called when new data is retrieved. '''
