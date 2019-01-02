@@ -66,18 +66,18 @@ class tpqoa(object):
         self.ctx = v20.Context(
             hostname=self.hostname,
             port=443,
-            #ssl=True,
-            #application='sample_code',
+            # ssl=True,
+            # application='sample_code',
             token=self.access_token,
-            #datetime_format='RFC3339'
+            # datetime_format='RFC3339'
         )
         self.ctx_stream = v20.Context(
             hostname=self.stream_hostname,
             port=443,
-            #ssl=True,
-            #application='sample_code',
+            # ssl=True,
+            # application='sample_code',
             token=self.access_token,
-            #datetime_format='RFC3339'
+            # datetime_format='RFC3339'
         )
 
         self.suffix = '.000000000Z'
@@ -217,7 +217,6 @@ class tpqoa(object):
                 if ret:
                     return msgs
                 break
-        
 
     def on_success(self, time, bid, ask):
         ''' Method called when new data is retrieved. '''
@@ -243,8 +242,12 @@ class tpqoa(object):
         ''' Prints basic transactions data. '''
         transactions = self.get_transactions(tid)
         for trans in transactions:
-            templ = '%5s | %s | %9s | %12s'
-            print(templ % (trans['id'],
-                           trans['time'],
-                           trans['instrument'],
-                           trans['units']))
+            try:
+                templ = '%5s | %s | %9s | %12s | %8s'
+                print(templ % (trans['id'],
+                               trans['time'],
+                               trans['instrument'],
+                               trans['units'],
+                               trans['pl']))
+            except:
+                pass

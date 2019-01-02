@@ -5,7 +5,7 @@
 
 ## Algorithmic Trading with Oanda
 
-`tpqoa` is a wrapper class for the Oanda REST API v20 (http://developer.oanda.com/). It makes use of the Python package `v20` from Oanda (https://github.com/oanda/v20-python). The package is authored an maintained by The Python Quants GmbH. &copy; Dr. Yves J. Hilpisch. MIT License.
+`tpqoa` is a wrapper class for the Oanda REST API v20 (http://developer.oanda.com/). It makes use of the Python package `v20` from Oanda (https://github.com/oanda/v20-python). The package is authored and maintained by The Python Quants GmbH. &copy; Dr. Yves J. Hilpisch. MIT License.
 
 ## Disclaimer
 
@@ -42,12 +42,12 @@ You can then set up an API connection by instantiating a connection object.
 
 
 ```python
-from tpqoa import tpqoa
+import tpqoa
 ```
 
 
 ```python
-oanda = tpqoa('oanda.cfg')
+oanda = tpqoa.tpqoa('oanda.cfg')
 ```
 
 ## Available Instruments
@@ -67,16 +67,16 @@ ins[:10]
 
 
 
-    [('USD/MXN', 'USD_MXN'),
-     ('GBP/USD', 'GBP_USD'),
-     ('USD/SGD', 'USD_SGD'),
-     ('EUR/SEK', 'EUR_SEK'),
-     ('Australia 200', 'AU200_AUD'),
-     ('EUR/CHF', 'EUR_CHF'),
-     ('NZD/CAD', 'NZD_CAD'),
-     ('Gold/JPY', 'XAU_JPY'),
-     ('US T-Bond', 'USB30Y_USD'),
-     ('Silver/CAD', 'XAG_CAD')]
+    [('TRY/JPY', 'TRY_JPY'),
+     ('USD/THB', 'USD_THB'),
+     ('GBP/CHF', 'GBP_CHF'),
+     ('CHF/HKD', 'CHF_HKD'),
+     ('Gold/NZD', 'XAU_NZD'),
+     ('Gold/Silver', 'XAU_XAG'),
+     ('AUD/CAD', 'AUD_CAD'),
+     ('SGD/JPY', 'SGD_JPY'),
+     ('AUD/USD', 'AUD_USD'),
+     ('Silver/JPY', 'XAG_JPY')]
 
 
 
@@ -144,38 +144,34 @@ data.info()
 print(data.head())
 ```
 
-                               c  complete        h        l        o  volume
-    time                                                                     
-    2018-01-01 22:00:00  1.20610      True  1.20819  1.20051  1.20101   35630
-    2018-01-02 22:00:00  1.20170      True  1.20673  1.20018  1.20620   31354
-    2018-01-03 22:00:00  1.20710      True  1.20897  1.20049  1.20170   35187
-    2018-01-04 22:00:00  1.20327      True  1.20847  1.20215  1.20692   36478
-    2018-01-07 22:00:00  1.19717      True  1.20530  1.19564  1.20301   27618
+                               c complete        h        l        o  volume
+    time                                                                    
+    2018-01-01 22:00:00  1.20610     True  1.20819  1.20051  1.20101   35630
+    2018-01-02 22:00:00  1.20170     True  1.20673  1.20018  1.20620   31354
+    2018-01-03 22:00:00  1.20710     True  1.20897  1.20049  1.20170   35187
+    2018-01-04 22:00:00  1.20327     True  1.20847  1.20215  1.20692   36478
+    2018-01-07 22:00:00  1.19717     True  1.20530  1.19564  1.20301   27618
 
 
 ## Streaming Data
 
-The method `stream_data()` allows the streaming of real.time data (bid & ask).
+The method `stream_data()` allows the streaming of real-time data (bid & ask).
 
 
 ```python
-oanda.stream_data('EUR_USD', stop=7)
+oanda.stream_data('EUR_USD', stop=3)
 ```
 
-    2018-08-10T08:38:08.208777385Z 1.14551 1.14564
-    2018-08-10T08:38:08.312214537Z 1.14555 1.14568
-    2018-08-10T08:38:08.967560685Z 1.14551 1.14563
-    2018-08-10T08:38:12.525357340Z 1.14546 1.14559
-    2018-08-10T08:38:26.231454204Z 1.14551 1.14563
-    2018-08-10T08:38:26.626428632Z 1.14546 1.14558
-    2018-08-10T08:38:26.757022721Z 1.14547 1.1456
+    2019-01-02T10:48:57.792678945Z 1.14374 1.14387
+    2019-01-02T10:49:21.500587626Z 1.14377 1.14391
+    2019-01-02T10:49:23.730787714Z 1.14379 1.14392
 
 
 By redefining the `on_success()` method, you can control what happes with the streaming data.
 
 
 ```python
-class myOanda(tpqoa):
+class myOanda(tpqoa.tpqoa):
     def on_success(self, time, bid, ask):
         ''' Method called when new data is retrieved. '''
         print('BID: {:.5f} | ASK: {:.5f}'.format(bid, ask))
@@ -191,13 +187,13 @@ my_oanda = myOanda('oanda.cfg')
 my_oanda.stream_data('EUR_USD', stop=7)
 ```
 
-    BID: 1.14547 | ASK: 1.14560
-    BID: 1.14548 | ASK: 1.14560
-    BID: 1.14544 | ASK: 1.14556
-    BID: 1.14544 | ASK: 1.14556
-    BID: 1.14543 | ASK: 1.14556
-    BID: 1.14539 | ASK: 1.14551
-    BID: 1.14533 | ASK: 1.14547
+    BID: 1.14379 | ASK: 1.14392
+    BID: 1.14382 | ASK: 1.14396
+    BID: 1.14380 | ASK: 1.14394
+    BID: 1.14377 | ASK: 1.14389
+    BID: 1.14373 | ASK: 1.14386
+    BID: 1.14369 | ASK: 1.14383
+    BID: 1.14374 | ASK: 1.14386
 
 
 ## Other Methods
@@ -247,6 +243,33 @@ help(oanda.get_account_summary)
     get_account_summary(detailed=False) method of tpqoa.tpqoa.tpqoa instance
         Returns summary data for Oanda account.
     
+
+
+
+```python
+help(oanda.print_transactions)
+```
+
+    Help on method print_transactions in module tpqoa.tpqoa:
+    
+    print_transactions(tid=0) method of tpqoa.tpqoa.tpqoa instance
+        Prints basic transactions data.
+    
+
+
+
+```python
+oanda.print_transactions(tid=3175)
+```
+
+     3177 | 2018-09-28T07:59:44.972093309Z |   EUR_USD |     -99500.0 | -27.3996
+     3179 | 2018-09-28T08:03:24.441630523Z |   EUR_USD |       1000.0 |      0.0
+     3181 | 2018-09-28T08:03:24.568658352Z |   EUR_USD |      -1500.0 |  -0.1119
+     3183 | 2018-09-28T08:03:24.699807529Z |   EUR_USD |        500.0 |  -0.0559
+     3185 | 2018-09-28T08:04:50.888923319Z |   EUR_USD |    -100000.0 |      0.0
+     3187 | 2018-09-28T08:05:30.543503420Z |   EUR_USD |     200000.0 | -12.0516
+     3189 | 2018-09-28T08:06:06.795250575Z |   EUR_USD |    -100000.0 |  -2.5823
+     3191 | 2018-11-15T15:06:41.181894512Z |   EUR_USD |        200.0 |      0.0
 
 
 <img src="http://hilpisch.com/tpq_logo.png" alt="The Python Quants" width="35%" align="right" border="0"><br>
