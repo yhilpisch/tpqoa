@@ -67,16 +67,16 @@ ins[:10]
 
 
 
-    [('TRY/JPY', 'TRY_JPY'),
-     ('USD/THB', 'USD_THB'),
-     ('GBP/CHF', 'GBP_CHF'),
-     ('CHF/HKD', 'CHF_HKD'),
-     ('Gold/NZD', 'XAU_NZD'),
-     ('Gold/Silver', 'XAU_XAG'),
-     ('AUD/CAD', 'AUD_CAD'),
-     ('SGD/JPY', 'SGD_JPY'),
-     ('AUD/USD', 'AUD_USD'),
-     ('Silver/JPY', 'XAG_JPY')]
+    [('USD/CNH', 'USD_CNH'),
+     ('Gold/CAD', 'XAU_CAD'),
+     ('US 2Y T-Note', 'USB02Y_USD'),
+     ('India 50', 'IN50_USD'),
+     ('Gold/AUD', 'XAU_AUD'),
+     ('EUR/HKD', 'EUR_HKD'),
+     ('Silver/HKD', 'XAG_HKD'),
+     ('Silver/AUD', 'XAG_AUD'),
+     ('Japan 225', 'JP225_USD'),
+     ('US SPX 500', 'SPX500_USD')]
 
 
 
@@ -162,9 +162,9 @@ The method `stream_data()` allows the streaming of real-time data (bid & ask).
 oanda.stream_data('EUR_USD', stop=3)
 ```
 
-    2019-01-02T10:48:57.792678945Z 1.14374 1.14387
-    2019-01-02T10:49:21.500587626Z 1.14377 1.14391
-    2019-01-02T10:49:23.730787714Z 1.14379 1.14392
+    2019-01-18T08:27:48.293661969Z 1.13965 1.13977
+    2019-01-18T08:27:53.849941883Z 1.13968 1.1398
+    2019-01-18T08:27:54.944929674Z 1.13967 1.1398
 
 
 By redefining the `on_success()` method, you can control what happes with the streaming data.
@@ -184,16 +184,14 @@ my_oanda = myOanda('oanda.cfg')
 
 
 ```python
-my_oanda.stream_data('EUR_USD', stop=7)
+my_oanda.stream_data('EUR_USD', stop=5)
 ```
 
-    BID: 1.14379 | ASK: 1.14392
-    BID: 1.14382 | ASK: 1.14396
-    BID: 1.14380 | ASK: 1.14394
-    BID: 1.14377 | ASK: 1.14389
-    BID: 1.14373 | ASK: 1.14386
-    BID: 1.14369 | ASK: 1.14383
-    BID: 1.14374 | ASK: 1.14386
+    BID: 1.13960 | ASK: 1.13973
+    BID: 1.13961 | ASK: 1.13974
+    BID: 1.13965 | ASK: 1.13979
+    BID: 1.13961 | ASK: 1.13974
+    BID: 1.13958 | ASK: 1.13970
 
 
 ## Other Methods
@@ -207,7 +205,7 @@ help(oanda.create_order)
 
     Help on method create_order in module tpqoa.tpqoa:
     
-    create_order(instrument, units) method of tpqoa.tpqoa.tpqoa instance
+    create_order(instrument, units, sl_distance=0.01) method of tpqoa.tpqoa.tpqoa instance
         Places order with Oanda.
         
         Parameters
@@ -218,18 +216,33 @@ help(oanda.create_order)
             number of units of instrument to be bought
             (positive int, eg 'units=50')
             or to be sold (negative int, eg 'units=-100')
+        sl_distance: float
+            stop loss distance price, mandatory eg in Germany
     
 
 
 
 ```python
-help(oanda.get_transactions)
+# going long 10,000 units
+# sl_distance of 20 pips
+oanda.create_order('EUR_USD', units=10000, sl_distance=0.002)
 ```
 
-    Help on method get_transactions in module tpqoa.tpqoa:
     
-    get_transactions(tid=0) method of tpqoa.tpqoa.tpqoa instance
-        Retrieves and returns transactions data.
+    
+     {'id': '3279', 'time': '2019-01-18T08:28:16.376958880Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '3278', 'requestID': '42520741153607542', 'type': 'ORDER_FILL', 'orderID': '3278', 'instrument': 'EUR_USD', 'units': '10000.0', 'gainQuoteHomeConversionFactor': '0.877408486295', 'lossQuoteHomeConversionFactor': '0.877516277927', 'price': 1.13972, 'fullVWAP': 1.13972, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.13958, 'liquidity': '10000000'}], 'asks': [{'price': 1.13972, 'liquidity': '10000000'}], 'closeoutBid': 1.13943, 'closeoutAsk': 1.13987}, 'reason': 'MARKET_ORDER', 'pl': '0.0', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '97127.3433', 'tradeOpened': {'tradeID': '3279', 'units': '10000.0', 'price': 1.13972, 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.6142', 'initialMarginRequired': '333.0'}, 'halfSpreadCost': '0.6142'} 
+    
+
+
+
+```python
+# closing out the position
+oanda.create_order('EUR_USD', units=-10000)
+```
+
+    
+    
+     {'id': '3282', 'time': '2019-01-18T08:28:36.645117858Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '3281', 'requestID': '42520741237523586', 'type': 'ORDER_FILL', 'orderID': '3281', 'instrument': 'EUR_USD', 'units': '-10000.0', 'gainQuoteHomeConversionFactor': '0.877277632052', 'lossQuoteHomeConversionFactor': '0.87737769355', 'price': 1.13976, 'fullVWAP': 1.13976, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.13976, 'liquidity': '10000000'}], 'asks': [{'price': 1.13989, 'liquidity': '10000000'}], 'closeoutBid': 1.13961, 'closeoutAsk': 1.14004}, 'reason': 'MARKET_ORDER', 'pl': '0.3509', 'financing': '-0.0003', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '97127.6939', 'tradesClosed': [{'tradeID': '3279', 'units': '-10000.0', 'price': 1.13976, 'realizedPL': '0.3509', 'financing': '-0.0003', 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.5703'}], 'halfSpreadCost': '0.5703'} 
     
 
 
@@ -247,6 +260,18 @@ help(oanda.get_account_summary)
 
 
 ```python
+help(oanda.get_transactions)
+```
+
+    Help on method get_transactions in module tpqoa.tpqoa:
+    
+    get_transactions(tid=0) method of tpqoa.tpqoa.tpqoa instance
+        Retrieves and returns transactions data.
+    
+
+
+
+```python
 help(oanda.print_transactions)
 ```
 
@@ -259,17 +284,13 @@ help(oanda.print_transactions)
 
 
 ```python
-oanda.print_transactions(tid=3175)
+oanda.print_transactions(tid=3272)
 ```
 
-     3177 | 2018-09-28T07:59:44.972093309Z |   EUR_USD |     -99500.0 | -27.3996
-     3179 | 2018-09-28T08:03:24.441630523Z |   EUR_USD |       1000.0 |      0.0
-     3181 | 2018-09-28T08:03:24.568658352Z |   EUR_USD |      -1500.0 |  -0.1119
-     3183 | 2018-09-28T08:03:24.699807529Z |   EUR_USD |        500.0 |  -0.0559
-     3185 | 2018-09-28T08:04:50.888923319Z |   EUR_USD |    -100000.0 |      0.0
-     3187 | 2018-09-28T08:05:30.543503420Z |   EUR_USD |     200000.0 | -12.0516
-     3189 | 2018-09-28T08:06:06.795250575Z |   EUR_USD |    -100000.0 |  -2.5823
-     3191 | 2018-11-15T15:06:41.181894512Z |   EUR_USD |        200.0 |      0.0
+     3273 | 2019-01-18T08:24:37.037381266Z |   EUR_USD |         10.0 |      0.0
+     3276 | 2019-01-18T08:26:03.380025696Z |   EUR_USD |        -10.0 |  -0.0022
+     3279 | 2019-01-18T08:28:16.376958880Z |   EUR_USD |      10000.0 |      0.0
+     3282 | 2019-01-18T08:28:36.645117858Z |   EUR_USD |     -10000.0 |   0.3509
 
 
 <img src="http://hilpisch.com/tpq_logo.png" alt="The Python Quants" width="35%" align="right" border="0"><br>

@@ -30,6 +30,7 @@
 import v20
 import configparser
 import pandas as pd
+from v20.transaction import StopLossDetails
 
 
 class tpqoa(object):
@@ -166,7 +167,7 @@ class tpqoa(object):
 
         return data
 
-    def create_order(self, instrument, units):
+    def create_order(self, instrument, units, sl_distance=0.01):
         ''' Places order with Oanda.
 
         Parameters
@@ -177,11 +178,15 @@ class tpqoa(object):
             number of units of instrument to be bought
             (positive int, eg 'units=50')
             or to be sold (negative int, eg 'units=-100')
+        sl_distance: float
+            stop loss distance price, mandatory eg in Germany
         '''
+        sl_details = StopLossDetails(distance=sl_distance)
         request = self.ctx.order.market(
             self.account_id,
             instrument=instrument,
             units=units,
+            stopLossOnFill=sl_details
         )
         order = request.get('orderFillTransaction')
         print('\n\n', order.dict(), '\n')
