@@ -30,6 +30,8 @@
 import v20
 import configparser
 import pandas as pd
+from v20.transaction import StopLossDetails, ClientExtensions
+from v20.transaction import TrailingStopLossDetails, TakeProfitDetails
 
 
 class tpqoa(object):
@@ -166,7 +168,8 @@ class tpqoa(object):
 
         return data
 
-    def create_order(self, instrument, units):
+    def create_order(self, instrument, units, sl_distance=None,
+                     tsl_distance=None, tp_price=None, comment=None):
         ''' Places order with Oanda.
 
         Parameters
@@ -177,14 +180,38 @@ class tpqoa(object):
             number of units of instrument to be bought
             (positive int, eg 'units=50')
             or to be sold (negative int, eg 'units=-100')
+        sl_distance: float
+            stop loss distance price, mandatory eg in Germany
+        tsl_distance: float
+            trailing stop loss distance
+        tp_price: float
+            take profit price to be used for the trade
+        comment: str
+            string
         '''
+        client_ext = ClientExtensions(
+            comment=comment) if comment is not None else None
+        sl_details = (StopLossDetails(distance=sl_distance,
+                                      clientExtensions=client_ext)
+                      if sl_distance is not None else None)
+        tsl_details = (TrailingStopLossDetails(distance=tsl_distance,
+                                               clientExtensions=client_ext)
+                       if tsl_distance is not None else None)
+        tp_details = (TakeProfitDetails(
+            price=tp_price, clientExtensions=client_ext)
+            if tp_price is not None else None)
+
         request = self.ctx.order.market(
             self.account_id,
             instrument=instrument,
             units=units,
+            stopLossOnFill=sl_details,
+            trailingStopLossOnFill=tsl_details,
+            takeProfitOnFill=tp_details,
         )
         order = request.get('orderFillTransaction')
         print('\n\n', order.dict(), '\n')
+        return request
 
     def stream_data(self, instrument, stop=None, ret=False):
         ''' Starts a real-time data stream.
