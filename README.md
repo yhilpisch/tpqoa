@@ -1,4 +1,3 @@
-
 <img src="http://hilpisch.com/tpq_logo.png" alt="The Python Quants" width="35%" align="right" border="0"><br>
 
 # tpqoa
@@ -67,16 +66,16 @@ ins[:10]
 
 
 
-    [('USD/CNH', 'USD_CNH'),
-     ('Gold/CAD', 'XAU_CAD'),
-     ('US 2Y T-Note', 'USB02Y_USD'),
-     ('India 50', 'IN50_USD'),
-     ('Gold/AUD', 'XAU_AUD'),
-     ('EUR/HKD', 'EUR_HKD'),
-     ('Silver/HKD', 'XAG_HKD'),
-     ('Silver/AUD', 'XAG_AUD'),
-     ('Japan 225', 'JP225_USD'),
-     ('US SPX 500', 'SPX500_USD')]
+    [('Silver/CHF', 'XAG_CHF'),
+     ('Silver/EUR', 'XAG_EUR'),
+     ('UK 10Y Gilt', 'UK10YB_GBP'),
+     ('GBP/ZAR', 'GBP_ZAR'),
+     ('Soybeans', 'SOYBN_USD'),
+     ('NZD/SGD', 'NZD_SGD'),
+     ('USD/HKD', 'USD_HKD'),
+     ('GBP/PLN', 'GBP_PLN'),
+     ('Platinum', 'XPT_USD'),
+     ('USD/JPY', 'USD_JPY')]
 
 
 
@@ -115,8 +114,8 @@ help(oanda.get_history)
 
 ```python
 data = oanda.get_history(instrument='EUR_USD',
-                  start='2018-01-01',
-                  end='2018-08-09',
+                  start='2019-07-01',
+                  end='2020-01-31',
                   granularity='D',
                   price='A')
 ```
@@ -127,16 +126,16 @@ data.info()
 ```
 
     <class 'pandas.core.frame.DataFrame'>
-    DatetimeIndex: 158 entries, 2018-01-01 22:00:00 to 2018-08-08 21:00:00
+    DatetimeIndex: 154 entries, 2019-06-30 21:00:00+00:00 to 2020-01-30 22:00:00+00:00
     Data columns (total 6 columns):
-    c           158 non-null float64
-    complete    158 non-null bool
-    h           158 non-null float64
-    l           158 non-null float64
-    o           158 non-null float64
-    volume      158 non-null int64
+    volume      154 non-null int64
+    complete    154 non-null bool
+    o           154 non-null float64
+    h           154 non-null float64
+    l           154 non-null float64
+    c           154 non-null float64
     dtypes: bool(1), float64(4), int64(1)
-    memory usage: 7.6 KB
+    memory usage: 7.4 KB
 
 
 
@@ -144,13 +143,21 @@ data.info()
 print(data.head())
 ```
 
-                               c complete        h        l        o  volume
-    time                                                                    
-    2018-01-01 22:00:00  1.20610     True  1.20819  1.20051  1.20101   35630
-    2018-01-02 22:00:00  1.20170     True  1.20673  1.20018  1.20620   31354
-    2018-01-03 22:00:00  1.20710     True  1.20897  1.20049  1.20170   35187
-    2018-01-04 22:00:00  1.20327     True  1.20847  1.20215  1.20692   36478
-    2018-01-07 22:00:00  1.19717     True  1.20530  1.19564  1.20301   27618
+                               volume  complete        o        h        l  \
+    time                                                                     
+    2019-06-30 21:00:00+00:00   18780      True  1.13644  1.13721  1.12819   
+    2019-07-01 21:00:00+00:00   15567      True  1.12867  1.13233  1.12759   
+    2019-07-02 21:00:00+00:00   14593      True  1.12871  1.13139  1.12695   
+    2019-07-03 21:00:00+00:00    5731      True  1.12795  1.12960  1.12740   
+    2019-07-04 21:00:00+00:00   15161      True  1.12871  1.12885  1.12081   
+    
+                                     c  
+    time                                
+    2019-06-30 21:00:00+00:00  1.12867  
+    2019-07-01 21:00:00+00:00  1.12871  
+    2019-07-02 21:00:00+00:00  1.12797  
+    2019-07-03 21:00:00+00:00  1.12859  
+    2019-07-04 21:00:00+00:00  1.12305  
 
 
 ## Streaming Data
@@ -162,9 +169,9 @@ The method `stream_data()` allows the streaming of real-time data (bid & ask).
 oanda.stream_data('EUR_USD', stop=3)
 ```
 
-    2019-01-18T08:27:48.293661969Z 1.13965 1.13977
-    2019-01-18T08:27:53.849941883Z 1.13968 1.1398
-    2019-01-18T08:27:54.944929674Z 1.13967 1.1398
+    2020-02-19T15:58:29.459179673Z 1.07937 1.07949
+    2020-02-19T15:58:31.140133526Z 1.07935 1.07947
+    2020-02-19T15:58:31.290597325Z 1.07937 1.07948
 
 
 By redefining the `on_success()` method, you can control what happes with the streaming data.
@@ -187,11 +194,11 @@ my_oanda = myOanda('oanda.cfg')
 my_oanda.stream_data('EUR_USD', stop=5)
 ```
 
-    BID: 1.13960 | ASK: 1.13973
-    BID: 1.13961 | ASK: 1.13974
-    BID: 1.13965 | ASK: 1.13979
-    BID: 1.13961 | ASK: 1.13974
-    BID: 1.13958 | ASK: 1.13970
+    BID: 1.07937 | ASK: 1.07949
+    BID: 1.07939 | ASK: 1.07949
+    BID: 1.07938 | ASK: 1.07948
+    BID: 1.07939 | ASK: 1.07949
+    BID: 1.07940 | ASK: 1.07952
 
 
 ## Other Methods
@@ -205,7 +212,7 @@ help(oanda.create_order)
 
     Help on method create_order in module tpqoa.tpqoa:
     
-    create_order(instrument, units, sl_distance=0.01) method of tpqoa.tpqoa.tpqoa instance
+    create_order(instrument, units, sl_distance=None, tsl_distance=None, tp_price=None, comment=None) method of tpqoa.tpqoa.tpqoa instance
         Places order with Oanda.
         
         Parameters
@@ -218,32 +225,52 @@ help(oanda.create_order)
             or to be sold (negative int, eg 'units=-100')
         sl_distance: float
             stop loss distance price, mandatory eg in Germany
+        tsl_distance: float
+            trailing stop loss distance
+        tp_price: float
+            take profit price to be used for the trade
+        comment: str
+            string
     
 
 
 
 ```python
-# going long 10,000 units
+# going long 100 units
 # sl_distance of 20 pips
-oanda.create_order('EUR_USD', units=10000, sl_distance=0.002)
+oanda.create_order('EUR_USD', units=100, sl_distance=0.002)
 ```
 
     
     
-     {'id': '3279', 'time': '2019-01-18T08:28:16.376958880Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '3278', 'requestID': '42520741153607542', 'type': 'ORDER_FILL', 'orderID': '3278', 'instrument': 'EUR_USD', 'units': '10000.0', 'gainQuoteHomeConversionFactor': '0.877408486295', 'lossQuoteHomeConversionFactor': '0.877516277927', 'price': 1.13972, 'fullVWAP': 1.13972, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.13958, 'liquidity': '10000000'}], 'asks': [{'price': 1.13972, 'liquidity': '10000000'}], 'closeoutBid': 1.13943, 'closeoutAsk': 1.13987}, 'reason': 'MARKET_ORDER', 'pl': '0.0', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '97127.3433', 'tradeOpened': {'tradeID': '3279', 'units': '10000.0', 'price': 1.13972, 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.6142', 'initialMarginRequired': '333.0'}, 'halfSpreadCost': '0.6142'} 
+     {'id': '4344', 'time': '2020-02-19T15:58:35.938800989Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '4343', 'requestID': '60679120971548823', 'type': 'ORDER_FILL', 'orderID': '4343', 'instrument': 'EUR_USD', 'units': '100.0', 'gainQuoteHomeConversionFactor': '0.926363375298', 'lossQuoteHomeConversionFactor': '0.926457781319', 'price': 1.07949, 'fullVWAP': 1.07949, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.07938, 'liquidity': '10000000'}], 'asks': [{'price': 1.07949, 'liquidity': '10000000'}], 'closeoutBid': 1.07938, 'closeoutAsk': 1.07949}, 'reason': 'MARKET_ORDER', 'pl': '0.0', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.9083', 'tradeOpened': {'tradeID': '4344', 'units': '100.0', 'price': 1.07949, 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0051', 'initialMarginRequired': '5.0'}, 'halfSpreadCost': '0.0051'} 
     
+
+
+
+
+
+    <v20.response.Response at 0x121be1510>
+
 
 
 
 ```python
 # closing out the position
-oanda.create_order('EUR_USD', units=-10000)
+oanda.create_order('EUR_USD', units=-100)
 ```
 
     
     
-     {'id': '3282', 'time': '2019-01-18T08:28:36.645117858Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '3281', 'requestID': '42520741237523586', 'type': 'ORDER_FILL', 'orderID': '3281', 'instrument': 'EUR_USD', 'units': '-10000.0', 'gainQuoteHomeConversionFactor': '0.877277632052', 'lossQuoteHomeConversionFactor': '0.87737769355', 'price': 1.13976, 'fullVWAP': 1.13976, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.13976, 'liquidity': '10000000'}], 'asks': [{'price': 1.13989, 'liquidity': '10000000'}], 'closeoutBid': 1.13961, 'closeoutAsk': 1.14004}, 'reason': 'MARKET_ORDER', 'pl': '0.3509', 'financing': '-0.0003', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '97127.6939', 'tradesClosed': [{'tradeID': '3279', 'units': '-10000.0', 'price': 1.13976, 'realizedPL': '0.3509', 'financing': '-0.0003', 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.5703'}], 'halfSpreadCost': '0.5703'} 
+     {'id': '4347', 'time': '2020-02-19T15:58:36.084702016Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '4346', 'requestID': '60679120975743546', 'type': 'ORDER_FILL', 'orderID': '4346', 'instrument': 'EUR_USD', 'units': '-100.0', 'gainQuoteHomeConversionFactor': '0.926363375298', 'lossQuoteHomeConversionFactor': '0.926457781319', 'price': 1.07938, 'fullVWAP': 1.07938, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.07938, 'liquidity': '10000000'}], 'asks': [{'price': 1.07949, 'liquidity': '9999900'}], 'closeoutBid': 1.07938, 'closeoutAsk': 1.07949}, 'reason': 'MARKET_ORDER', 'pl': '-0.0102', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.8981', 'tradesClosed': [{'tradeID': '4344', 'units': '-100.0', 'price': 1.07938, 'realizedPL': '-0.0102', 'financing': '0.0', 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0051'}], 'halfSpreadCost': '0.0051'} 
     
+
+
+
+
+
+    <v20.response.Response at 0x121b68710>
+
 
 
 
@@ -256,6 +283,49 @@ help(oanda.get_account_summary)
     get_account_summary(detailed=False) method of tpqoa.tpqoa.tpqoa instance
         Returns summary data for Oanda account.
     
+
+
+
+```python
+oanda.get_account_summary()
+```
+
+
+
+
+    {'id': '101-004-5516121-001',
+     'alias': 'Primary',
+     'currency': 'EUR',
+     'balance': '96758.8981',
+     'createdByUserID': 5516121,
+     'createdTime': '2017-03-08T16:28:21.276100637Z',
+     'guaranteedStopLossOrderMode': 'DISABLED',
+     'pl': '-121958.3379',
+     'resettablePL': '-121958.3379',
+     'resettablePLTime': '2017-03-08T16:28:21.276100637Z',
+     'financing': '-704.944',
+     'commission': '0.0',
+     'guaranteedExecutionFees': '0.0',
+     'marginRate': '0.05',
+     'openTradeCount': 0,
+     'openPositionCount': 0,
+     'pendingOrderCount': 0,
+     'hedgingEnabled': False,
+     'unrealizedPL': '0.0',
+     'NAV': '96758.8981',
+     'marginUsed': '0.0',
+     'marginAvailable': '96758.8981',
+     'positionValue': '0.0',
+     'marginCloseoutUnrealizedPL': '0.0',
+     'marginCloseoutNAV': '96758.8981',
+     'marginCloseoutMarginUsed': '0.0',
+     'marginCloseoutPercent': '0.0',
+     'marginCloseoutPositionValue': '0.0',
+     'withdrawalLimit': '96758.8981',
+     'marginCallMarginUsed': '0.0',
+     'marginCallPercent': '0.0',
+     'lastTransactionID': '4348'}
+
 
 
 
@@ -284,13 +354,18 @@ help(oanda.print_transactions)
 
 
 ```python
-oanda.print_transactions(tid=3272)
+oanda.print_transactions(tid=4300)
 ```
 
-     3273 | 2019-01-18T08:24:37.037381266Z |   EUR_USD |         10.0 |      0.0
-     3276 | 2019-01-18T08:26:03.380025696Z |   EUR_USD |        -10.0 |  -0.0022
-     3279 | 2019-01-18T08:28:16.376958880Z |   EUR_USD |      10000.0 |      0.0
-     3282 | 2019-01-18T08:28:36.645117858Z |   EUR_USD |     -10000.0 |   0.3509
+     4303 | 2020-01-13T13:58:21.608898271Z |   EUR_GBP |       -100.0 |    0.007
+     4316 | 2020-01-24T12:57:49.782136872Z |   EUR_USD |       -100.0 |  -0.9069
+     4317 | 2020-01-24T12:57:49.829755813Z |   EUR_USD |       -100.0 |   -0.907
+     4321 | 2020-01-27T15:45:00.969811653Z |   EUR_USD |       -100.0 |   -0.908
+     4336 | 2020-02-10T15:57:40.773642237Z |   EUR_USD |      -9500.0 | -86.9947
+     4338 | 2020-02-19T15:56:27.193640467Z |   EUR_USD |        100.0 |      0.0
+     4341 | 2020-02-19T15:56:39.259782926Z |   EUR_USD |       -100.0 |  -0.0065
+     4344 | 2020-02-19T15:58:35.938800989Z |   EUR_USD |        100.0 |      0.0
+     4347 | 2020-02-19T15:58:36.084702016Z |   EUR_USD |       -100.0 |  -0.0102
 
 
 <img src="http://hilpisch.com/tpq_logo.png" alt="The Python Quants" width="35%" align="right" border="0"><br>
