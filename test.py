@@ -47,14 +47,14 @@ class TestTPQOA(unittest.TestCase):
         self.assertIsNotNone(self.tpqoa.access_token)
 
     def test_place_order(self):
-        oanda_response = self.tpqoa.create_order('EUR_USD', units=10)
+        oanda_response = self.tpqoa.create_order('EUR_USD', units=10, ret=True)
         oanda_response = oanda_response.get('orderFillTransaction').dict()
         self.assertEqual(
             Decimal(oanda_response['units']), 10, 'Open Order placed successfully')
         self.assertEqual(Decimal(
             oanda_response['tradeOpened']['units']), 10, 'New trade opened check success')
 
-        oanda_response = self.tpqoa.create_order('EUR_USD', units=-10)
+        oanda_response = self.tpqoa.create_order('EUR_USD', units=-10, ret=True)
         oanda_response = oanda_response.get('orderFillTransaction').dict()
         self.assertEqual(
             Decimal(oanda_response['units']), -10, 'Close Order placed successfully')
@@ -63,16 +63,16 @@ class TestTPQOA(unittest.TestCase):
 
     def test_sl_distance(self):
         oanda_response = self.tpqoa.create_order(
-            'EUR_USD', units=10, sl_distance=0.005)
+            'EUR_USD', units=10, sl_distance=0.005, ret=True)
         oanda_response = oanda_response.get('orderCreateTransaction').dict()
         self.assertEqual(Decimal(oanda_response['stopLossOnFill']['distance']), round(Decimal(0.005), 3),
                          'sl created successfully')
 
-        oanda_response = self.tpqoa.create_order('EUR_USD', units=-10)
+        oanda_response = self.tpqoa.create_order('EUR_USD', units=-10, ret=True)
 
     def test_tsl_tp_order(self):
         oanda_response = self.tpqoa.create_order(
-            'EUR_USD', units=10, sl_distance=0.0005)
+            'EUR_USD', units=10, sl_distance=0.0005, ret=True)
         oanda_create_response = oanda_response.get(
             'orderCreateTransaction').dict()
         self.assertEqual(Decimal(oanda_create_response['stopLossOnFill']['distance']), round(Decimal(0.0005), 4),
@@ -82,7 +82,7 @@ class TestTPQOA(unittest.TestCase):
 
         sleep(3)
         oanda_response = self.tpqoa.create_order(
-            'EUR_USD', units=10, tsl_distance=0.0005, tp_price=tp_price)
+            'EUR_USD', units=10, tsl_distance=0.0005, tp_price=tp_price, ret=True)
         oanda_create_response = oanda_response.get(
             'orderCreateTransaction').dict()
         self.assertEqual(Decimal(oanda_create_response['trailingStopLossOnFill']['distance']),
@@ -91,7 +91,7 @@ class TestTPQOA(unittest.TestCase):
                              'TP created successfully')
 
         sleep(3)
-        oanda_response = self.tpqoa.create_order('EUR_USD', units=-20)
+        oanda_response = self.tpqoa.create_order('EUR_USD', units=-20, ret=True)
 
     def test_get_instruments(self):
         instruments = self.tpqoa.get_instruments()

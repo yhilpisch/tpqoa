@@ -169,7 +169,8 @@ class tpqoa(object):
         return data
 
     def create_order(self, instrument, units, sl_distance=None,
-                     tsl_distance=None, tp_price=None, comment=None):
+                     tsl_distance=None, tp_price=None, comment=None,
+                     ret=False):
         ''' Places order with Oanda.
 
         Parameters
@@ -211,7 +212,8 @@ class tpqoa(object):
         )
         order = request.get('orderFillTransaction')
         print('\n\n', order.dict(), '\n')
-        return request
+        if ret == True:
+            return request
 
     def stream_data(self, instrument, stop=None, ret=False):
         ''' Starts a real-time data stream.

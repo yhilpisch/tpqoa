@@ -169,9 +169,9 @@ The method `stream_data()` allows the streaming of real-time data (bid & ask).
 oanda.stream_data('EUR_USD', stop=3)
 ```
 
-    2020-02-19T15:58:29.459179673Z 1.07937 1.07949
-    2020-02-19T15:58:31.140133526Z 1.07935 1.07947
-    2020-02-19T15:58:31.290597325Z 1.07937 1.07948
+    2020-02-19T16:47:33.801700552Z 1.07978 1.0799
+    2020-02-19T16:47:36.115072873Z 1.07979 1.07989
+    2020-02-19T16:47:36.941344979Z 1.07979 1.07991
 
 
 By redefining the `on_success()` method, you can control what happes with the streaming data.
@@ -194,11 +194,11 @@ my_oanda = myOanda('oanda.cfg')
 my_oanda.stream_data('EUR_USD', stop=5)
 ```
 
-    BID: 1.07937 | ASK: 1.07949
-    BID: 1.07939 | ASK: 1.07949
-    BID: 1.07938 | ASK: 1.07948
-    BID: 1.07939 | ASK: 1.07949
-    BID: 1.07940 | ASK: 1.07952
+    BID: 1.07978 | ASK: 1.07990
+    BID: 1.07979 | ASK: 1.07991
+    BID: 1.07979 | ASK: 1.07991
+    BID: 1.07980 | ASK: 1.07992
+    BID: 1.07980 | ASK: 1.07992
 
 
 ## Other Methods
@@ -212,7 +212,7 @@ help(oanda.create_order)
 
     Help on method create_order in module tpqoa.tpqoa:
     
-    create_order(instrument, units, sl_distance=None, tsl_distance=None, tp_price=None, comment=None) method of tpqoa.tpqoa.tpqoa instance
+    create_order(instrument, units, sl_distance=None, tsl_distance=None, tp_price=None, comment=None, ret=False) method of tpqoa.tpqoa.tpqoa instance
         Places order with Oanda.
         
         Parameters
@@ -243,15 +243,16 @@ oanda.create_order('EUR_USD', units=100, sl_distance=0.002)
 
     
     
-     {'id': '4344', 'time': '2020-02-19T15:58:35.938800989Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '4343', 'requestID': '60679120971548823', 'type': 'ORDER_FILL', 'orderID': '4343', 'instrument': 'EUR_USD', 'units': '100.0', 'gainQuoteHomeConversionFactor': '0.926363375298', 'lossQuoteHomeConversionFactor': '0.926457781319', 'price': 1.07949, 'fullVWAP': 1.07949, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.07938, 'liquidity': '10000000'}], 'asks': [{'price': 1.07949, 'liquidity': '10000000'}], 'closeoutBid': 1.07938, 'closeoutAsk': 1.07949}, 'reason': 'MARKET_ORDER', 'pl': '0.0', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.9083', 'tradeOpened': {'tradeID': '4344', 'units': '100.0', 'price': 1.07949, 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0051', 'initialMarginRequired': '5.0'}, 'halfSpreadCost': '0.0051'} 
+     {'id': '4481', 'time': '2020-02-19T16:47:42.095899410Z', 'userID': 5516121, 'accountID': '101-004-5516121-001',
+     'batchID': '4480', 'requestID': '24650336313951685', 'type': 'ORDER_FILL', 'orderID': '4480', 'instrument': 
+     'EUR_USD', 'units': '100.0', 'gainQuoteHomeConversionFactor': '0.925994518112', 'lossQuoteHomeConversionFactor':
+     '0.926097425449', 'price': 1.07992, 'fullVWAP': 1.07992, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 
+     1.0798, 'liquidity': '10000000'}], 'asks': [{'price': 1.07992, 'liquidity': '10000000'}], 'closeoutBid': 1.0798,
+     'closeoutAsk': 1.07992}, 'reason': 'MARKET_ORDER', 'pl': '0.0', 'financing': '0.0', 'commission': '0.0', 
+     'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.8741', 'tradeOpened': {'tradeID': '4481', 'units':
+     '100.0', 'price': 1.07992, 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0056', 'initialMarginRequired':
+     '5.0'}, 'halfSpreadCost': '0.0056'} 
     
-
-
-
-
-
-    <v20.response.Response at 0x121be1510>
-
 
 
 
@@ -262,15 +263,18 @@ oanda.create_order('EUR_USD', units=-100)
 
     
     
-     {'id': '4347', 'time': '2020-02-19T15:58:36.084702016Z', 'userID': 5516121, 'accountID': '101-004-5516121-001', 'batchID': '4346', 'requestID': '60679120975743546', 'type': 'ORDER_FILL', 'orderID': '4346', 'instrument': 'EUR_USD', 'units': '-100.0', 'gainQuoteHomeConversionFactor': '0.926363375298', 'lossQuoteHomeConversionFactor': '0.926457781319', 'price': 1.07938, 'fullVWAP': 1.07938, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.07938, 'liquidity': '10000000'}], 'asks': [{'price': 1.07949, 'liquidity': '9999900'}], 'closeoutBid': 1.07938, 'closeoutAsk': 1.07949}, 'reason': 'MARKET_ORDER', 'pl': '-0.0102', 'financing': '0.0', 'commission': '0.0', 'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.8981', 'tradesClosed': [{'tradeID': '4344', 'units': '-100.0', 'price': 1.07938, 'realizedPL': '-0.0102', 'financing': '0.0', 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0051'}], 'halfSpreadCost': '0.0051'} 
+     {'id': '4484', 'time': '2020-02-19T16:47:42.243308180Z', 'userID': 5516121, 'accountID': '101-004-5516121-001',
+     'batchID': '4483', 'requestID': '24650336313952080', 'type': 'ORDER_FILL', 'orderID': '4483', 'instrument':
+     'EUR_USD', 'units': '-100.0', 'gainQuoteHomeConversionFactor': '0.925994518112', 'lossQuoteHomeConversionFactor':
+     '0.926097425449', 'price': 1.0798, 'fullVWAP': 1.0798, 'fullPrice': {'type': 'PRICE', 'bids': [{'price': 1.0798,
+     'liquidity': '10000000'}], 'asks': [{'price': 1.07992, 'liquidity': '9999900'}], 'closeoutBid': 1.0798,
+     'closeoutAsk': 1.07992}, 'reason': 'MARKET_ORDER', 'pl': '-0.0106', 'financing': '0.0', 'commission': '0.0',
+     'guaranteedExecutionFee': '0.0', 'accountBalance': '96758.8635', 'tradesClosed': [{'tradeID': '4475', 'units': 
+     '-20.0', 'price': 1.0798, 'realizedPL': '-0.0017', 'financing': '0.0', 'guaranteedExecutionFee': '0.0', 
+     'halfSpreadCost': '0.0011'}], 'tradeReduced': {'tradeID': '4481', 'units': '-80.0', 'price': 1.0798, 
+     'realizedPL': '-0.0089', 'financing': '0.0', 'guaranteedExecutionFee': '0.0', 'halfSpreadCost': '0.0044'},
+     'halfSpreadCost': '0.0055'} 
     
-
-
-
-
-
-    <v20.response.Response at 0x121b68710>
-
 
 
 
@@ -296,35 +300,35 @@ oanda.get_account_summary()
     {'id': '101-004-5516121-001',
      'alias': 'Primary',
      'currency': 'EUR',
-     'balance': '96758.8981',
+     'balance': '96758.8635',
      'createdByUserID': 5516121,
      'createdTime': '2017-03-08T16:28:21.276100637Z',
      'guaranteedStopLossOrderMode': 'DISABLED',
-     'pl': '-121958.3379',
-     'resettablePL': '-121958.3379',
+     'pl': '-121958.3725',
+     'resettablePL': '-121958.3725',
      'resettablePLTime': '2017-03-08T16:28:21.276100637Z',
      'financing': '-704.944',
      'commission': '0.0',
      'guaranteedExecutionFees': '0.0',
      'marginRate': '0.05',
-     'openTradeCount': 0,
-     'openPositionCount': 0,
-     'pendingOrderCount': 0,
+     'openTradeCount': 1,
+     'openPositionCount': 1,
+     'pendingOrderCount': 1,
      'hedgingEnabled': False,
-     'unrealizedPL': '0.0',
-     'NAV': '96758.8981',
-     'marginUsed': '0.0',
-     'marginAvailable': '96758.8981',
-     'positionValue': '0.0',
-     'marginCloseoutUnrealizedPL': '0.0',
-     'marginCloseoutNAV': '96758.8981',
-     'marginCloseoutMarginUsed': '0.0',
-     'marginCloseoutPercent': '0.0',
-     'marginCloseoutPositionValue': '0.0',
-     'withdrawalLimit': '96758.8981',
-     'marginCallMarginUsed': '0.0',
-     'marginCallPercent': '0.0',
-     'lastTransactionID': '4348'}
+     'unrealizedPL': '-0.0022',
+     'NAV': '96758.8613',
+     'marginUsed': '1.0',
+     'marginAvailable': '96757.8613',
+     'positionValue': '20.0',
+     'marginCloseoutUnrealizedPL': '-0.0011',
+     'marginCloseoutNAV': '96758.8624',
+     'marginCloseoutMarginUsed': '1.0',
+     'marginCloseoutPercent': '1e-05',
+     'marginCloseoutPositionValue': '20.0',
+     'withdrawalLimit': '96757.8613',
+     'marginCallMarginUsed': '1.0',
+     'marginCallPercent': '1e-05',
+     'lastTransactionID': '4485'}
 
 
 
@@ -354,18 +358,22 @@ help(oanda.print_transactions)
 
 
 ```python
-oanda.print_transactions(tid=4300)
+oanda.print_transactions(tid=4450)
 ```
 
-     4303 | 2020-01-13T13:58:21.608898271Z |   EUR_GBP |       -100.0 |    0.007
-     4316 | 2020-01-24T12:57:49.782136872Z |   EUR_USD |       -100.0 |  -0.9069
-     4317 | 2020-01-24T12:57:49.829755813Z |   EUR_USD |       -100.0 |   -0.907
-     4321 | 2020-01-27T15:45:00.969811653Z |   EUR_USD |       -100.0 |   -0.908
-     4336 | 2020-02-10T15:57:40.773642237Z |   EUR_USD |      -9500.0 | -86.9947
-     4338 | 2020-02-19T15:56:27.193640467Z |   EUR_USD |        100.0 |      0.0
-     4341 | 2020-02-19T15:56:39.259782926Z |   EUR_USD |       -100.0 |  -0.0065
-     4344 | 2020-02-19T15:58:35.938800989Z |   EUR_USD |        100.0 |      0.0
-     4347 | 2020-02-19T15:58:36.084702016Z |   EUR_USD |       -100.0 |  -0.0102
+     4451 | 2020-02-19T16:28:41.702443781Z |   EUR_USD |         10.0 |      0.0
+     4453 | 2020-02-19T16:28:41.833970928Z |   EUR_USD |        -10.0 |   0.0034
+     4456 | 2020-02-19T16:28:42.384410161Z |   EUR_USD |         10.0 |      0.0
+     4459 | 2020-02-19T16:28:42.519605501Z |   EUR_USD |        -10.0 |   0.0031
+     4461 | 2020-02-19T16:28:43.052289649Z |   EUR_USD |         10.0 |      0.0
+     4464 | 2020-02-19T16:28:46.212352103Z |   EUR_USD |         10.0 |      0.0
+     4468 | 2020-02-19T16:28:49.349725889Z |   EUR_USD |        -20.0 |   0.0074
+     4471 | 2020-02-19T16:31:46.964516516Z |   EUR_USD |        -10.0 |  -0.0046
+     4472 | 2020-02-19T16:32:01.924364975Z |   EUR_USD |        -10.0 |  -0.0056
+     4475 | 2020-02-19T16:46:56.227615256Z |   EUR_USD |        100.0 |      0.0
+     4478 | 2020-02-19T16:46:56.372352822Z |   EUR_USD |       -100.0 |  -0.0089
+     4481 | 2020-02-19T16:47:42.095899410Z |   EUR_USD |        100.0 |      0.0
+     4484 | 2020-02-19T16:47:42.243308180Z |   EUR_USD |       -100.0 |  -0.0106
 
 
 <img src="http://hilpisch.com/tpq_logo.png" alt="The Python Quants" width="35%" align="right" border="0"><br>
