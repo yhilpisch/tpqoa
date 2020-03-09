@@ -115,8 +115,12 @@ class tpqoa(object):
             for cs in raw:
                 cs.update(cs['bid'])
                 del cs['bid']
+        elif price == 'M':
+            for cs in raw:
+                cs.update(cs['mid'])
+                del cs['mid']
         else:
-            raise ValueError("price must be either 'B' or 'A'.")
+            raise ValueError("price must be either 'B', 'A' or 'M'.")
         if len(raw) == 0:
             return pd.DataFrame()  # return empty DataFrame if no data
         data = pd.DataFrame(raw)
@@ -140,7 +144,7 @@ class tpqoa(object):
         granularity: string
             a string like 'S5', 'M1' or 'D'
         price: string
-            one of 'A' (ask) or 'B' (bid)
+            one of 'A' (ask), 'B' (bid) or 'M' (middle)
 
         Returns
         =======
