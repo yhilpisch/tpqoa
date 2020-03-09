@@ -68,18 +68,13 @@ class tpqoa(object):
         self.ctx = v20.Context(
             hostname=self.hostname,
             port=443,
-            # ssl=True,
-            # application='sample_code',
             token=self.access_token,
-            # datetime_format='RFC3339'
+            poll_timeout=10
         )
         self.ctx_stream = v20.Context(
             hostname=self.stream_hostname,
             port=443,
-            # ssl=True,
-            # application='sample_code',
             token=self.access_token,
-            # datetime_format='RFC3339'
         )
 
         self.suffix = '.000000000Z'
@@ -128,7 +123,7 @@ class tpqoa(object):
         return data
 
     def get_history(self, instrument, start, end,
-                    granularity, price):
+                    granularity, price, localize=True):
         ''' Retrieves historical data for instrument.
 
         Parameters
@@ -165,12 +160,14 @@ class tpqoa(object):
             end = self.transform_datetime(end)
             data = self.retrieve_data(instrument, start, end,
                                       granularity, price)
+        if localize:
+            data.index = data.index.tz_localize(None)
 
-        return data
+        return data[['o', 'h', 'l', 'c', 'volume', 'complete']]
 
     def create_order(self, instrument, units, sl_distance=None,
                      tsl_distance=None, tp_price=None, comment=None,
-                     ret=False):
+                     suppress=False, ret=False):
         ''' Places order with Oanda.
 
         Parameters
@@ -210,10 +207,14 @@ class tpqoa(object):
             trailingStopLossOnFill=tsl_details,
             takeProfitOnFill=tp_details,
         )
-        order = request.get('orderFillTransaction')
-        print('\n\n', order.dict(), '\n')
-        if ret == True:
-            return request
+        try:
+            order = request.get('orderFillTransaction')
+        except:
+            order = request.get('orderCreateTransaction')
+        if not suppress:
+            print('\n\n', order.dict(), '\n')
+        if ret is True:
+            return order.dict()
 
     def stream_data(self, instrument, stop=None, ret=False):
         ''' Starts a real-time data stream.
@@ -259,6 +260,12 @@ class tpqoa(object):
             response = self.ctx.account.summary(self.account_id)
         raw = response.get('account')
         return raw.dict()
+
+    def get_transaction(self, tid=0):
+        ''' Retrieves and returns tansaction data. '''
+        response = self.ctx.transaction.get(self.account_id, tid)
+        transaction = response.get('transaction')
+        return transaction.dict()
 
     def get_transactions(self, tid=0):
         ''' Retrieves and returns transactions data. '''
