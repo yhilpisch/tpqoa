@@ -100,11 +100,11 @@ class tpqoa(object):
             dati = pd.Timestamp(dati).to_pydatetime()
         return dati.isoformat('T') + self.suffix
 
-    def retrieve_data(self, instrument, start, end, granularity, price):
+    def retrieve_data(self, instrument, start, end, granularity, price, smooth = False, dailyAlignment = 17, alignmentTimezone = "America/New_York"):
         raw = self.ctx.instrument.candles(
             instrument=instrument,
             fromTime=start, toTime=end,
-            granularity=granularity, price=price)
+            granularity=granularity, price=price, smooth=smooth, dailyAlignment=dailyAlignment, alignmentTimezone=alignmentTimezone)
         raw = raw.get('candles')
         raw = [cs.dict() for cs in raw]
         if price == 'A':
@@ -132,9 +132,9 @@ class tpqoa(object):
         return data
 
     def get_history(self, instrument, start, end,
-                    granularity, price):
+                    granularity, price, smooth = False, dailyAlignment = 17, alignmentTimezone = "America/New_York"):
         ''' Retrieves historical data for instrument.
-
+        Source: https://developer.oanda.com/rest-live/rates/#retrieve-instrument-history
         Parameters
         ==========
         instrument: string
@@ -168,7 +168,7 @@ class tpqoa(object):
             start = self.transform_datetime(start)
             end = self.transform_datetime(end)
             data = self.retrieve_data(instrument, start, end,
-                                      granularity, price)
+                                      granularity, price, smooth, dailyAlignment, alignmentTimezone)
 
         return data
 
