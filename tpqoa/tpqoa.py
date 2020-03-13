@@ -87,7 +87,7 @@ class tpqoa(object):
         instruments = [ins.dict() for ins in instruments]
         instruments = [(ins['displayName'], ins['name'])
                        for ins in instruments]
-        return instruments
+        return sorted(instruments)
 
     def transform_datetime(self, dati):
         ''' Transforms Python datetime object to string. '''
