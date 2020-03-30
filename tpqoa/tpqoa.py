@@ -148,7 +148,7 @@ class tpqoa(object):
         '''
         if granularity.startswith('S') or granularity.startswith('M'):
             if granularity.startswith('S'):
-                freq = '4h'
+                freq = '1h'
             else:
                 freq = 'D'
             data = pd.DataFrame()
@@ -239,6 +239,7 @@ class tpqoa(object):
             # print(msg_type, msg)
             if msg_type == 'pricing.ClientPrice':
                 self.ticks += 1
+                self.time = msg.time
                 self.on_success(msg.time,
                                 float(msg.bids[0].dict()['price']),
                                 float(msg.asks[0].dict()['price']))
