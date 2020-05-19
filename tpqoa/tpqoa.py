@@ -28,6 +28,7 @@
 # to the extent permitted by applicable law.
 #
 import v20
+import json
 import configparser
 import pandas as pd
 from v20.transaction import StopLossDetails, ClientExtensions
@@ -88,6 +89,14 @@ class tpqoa(object):
         instruments = [(ins['displayName'], ins['name'])
                        for ins in instruments]
         return sorted(instruments)
+
+    def get_prices(self, instrument):
+        ''' Returns the current BID/ASK prices for instrument. '''
+        r = self.ctx.pricing.get(self.account_id, instruments=instrument)
+        r = json.loads(r.raw_body)
+        bid = float(r['prices'][0]['closeoutBid'])
+        ask = float(r['prices'][0]['closeoutAsk'])
+        return r['time'], bid, ask
 
     def transform_datetime(self, dati):
         ''' Transforms Python datetime object to string. '''
@@ -171,7 +180,7 @@ class tpqoa(object):
 
     def create_order(self, instrument, units, price=None, sl_distance=None,
                      tsl_distance=None, tp_price=None, comment=None,
-                     suppress=False, ret=False):
+                     touch=False, suppress=False, ret=False):
         ''' Places order with Oanda.
 
         Parameters
@@ -183,7 +192,7 @@ class tpqoa(object):
             (positive int, eg 'units=50')
             or to be sold (negative int, eg 'units=-100')
         price: float
-            limit order price
+            limit order price, touch order price
         sl_distance: float
             stop loss distance price, mandatory eg in Germany
         tsl_distance: float
@@ -192,6 +201,12 @@ class tpqoa(object):
             take profit price to be used for the trade
         comment: str
             string
+        touch: boolean
+            market_if_touched order (requires price to be set)
+        suppress: boolean
+            whether to suppress print out
+        ret: boolean
+            whether to return the order object
         '''
         client_ext = ClientExtensions(
             comment=comment) if comment is not None else None
@@ -213,6 +228,16 @@ class tpqoa(object):
                 trailingStopLossOnFill=tsl_details,
                 takeProfitOnFill=tp_details,
             )
+        elif touch:
+            request = self.ctx.order.market_if_touched(
+                self.account_id,
+                instrument=instrument,
+                price=price,
+                units=units,
+                stopLossOnFill=sl_details,
+                trailingStopLossOnFill=tsl_details,
+                takeProfitOnFill=tp_details
+            )
         else:
             request = self.ctx.order.limit(
                 self.account_id,
@@ -221,7 +246,7 @@ class tpqoa(object):
                 units=units,
                 stopLossOnFill=sl_details,
                 trailingStopLossOnFill=tsl_details,
-                takeProfitOnFill=tp_details,
+                takeProfitOnFill=tp_details
             )
         try:
             order = request.get('orderFillTransaction')
