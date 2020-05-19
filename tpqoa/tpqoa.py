@@ -169,7 +169,7 @@ class tpqoa(object):
 
         return data[['o', 'h', 'l', 'c', 'volume', 'complete']]
 
-    def create_order(self, instrument, units, sl_distance=None,
+    def create_order(self, instrument, units, price=None, sl_distance=None,
                      tsl_distance=None, tp_price=None, comment=None,
                      suppress=False, ret=False):
         ''' Places order with Oanda.
@@ -182,6 +182,8 @@ class tpqoa(object):
             number of units of instrument to be bought
             (positive int, eg 'units=50')
             or to be sold (negative int, eg 'units=-100')
+        price: float
+            limit order price
         sl_distance: float
             stop loss distance price, mandatory eg in Germany
         tsl_distance: float
@@ -202,15 +204,25 @@ class tpqoa(object):
         tp_details = (TakeProfitDetails(
             price=tp_price, clientExtensions=client_ext)
             if tp_price is not None else None)
-
-        request = self.ctx.order.market(
-            self.account_id,
-            instrument=instrument,
-            units=units,
-            stopLossOnFill=sl_details,
-            trailingStopLossOnFill=tsl_details,
-            takeProfitOnFill=tp_details,
-        )
+        if price is None:
+            request = self.ctx.order.market(
+                self.account_id,
+                instrument=instrument,
+                units=units,
+                stopLossOnFill=sl_details,
+                trailingStopLossOnFill=tsl_details,
+                takeProfitOnFill=tp_details,
+            )
+        else:
+            request = self.ctx.order.limit(
+                self.account_id,
+                instrument=instrument,
+                price=price,
+                units=units,
+                stopLossOnFill=sl_details,
+                trailingStopLossOnFill=tsl_details,
+                takeProfitOnFill=tp_details,
+            )
         try:
             order = request.get('orderFillTransaction')
         except:
