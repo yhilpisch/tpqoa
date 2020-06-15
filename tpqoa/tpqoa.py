@@ -250,7 +250,7 @@ class tpqoa(object):
             )
         try:
             order = request.get('orderFillTransaction')
-        except:
+        except Exception:
             order = request.get('orderCreateTransaction')
         if not suppress:
             print('\n\n', order.dict(), '\n')
@@ -304,7 +304,7 @@ class tpqoa(object):
         return raw.dict()
 
     def get_transaction(self, tid=0):
-        ''' Retrieves and returns tansaction data. '''
+        ''' Retrieves and returns transaction data. '''
         response = self.ctx.transaction.get(self.account_id, tid)
         transaction = response.get('transaction')
         return transaction.dict()
@@ -327,5 +327,11 @@ class tpqoa(object):
                                trans['instrument'],
                                trans['units'],
                                trans['pl']))
-            except:
+            except Exception:
                 pass
+
+    def get_positions(self):
+        ''' Retrieves and returns positions data. '''
+        response = self.ctx.position.list_open(self.account_id).body
+        positions = [p.dict() for p in response.get('positions')]
+        return positions
