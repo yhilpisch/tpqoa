@@ -162,10 +162,15 @@ class tpqoa(object):
                 freq = 'D'
             data = pd.DataFrame()
             dr = pd.date_range(start, end, freq=freq)
-            for t in range(len(dr) - 1):
-                start = self.transform_datetime(dr[t])
-                end = self.transform_datetime(dr[t + 1])
-                batch = self.retrieve_data(instrument, start, end,
+
+            for t in range(len(dr)):
+                batch_start = self.transform_datetime(dr[t])
+                if t != len(dr) - 1:
+                    batch_end = self.transform_datetime(dr[t + 1])
+                else:
+                    batch_end = self.transform_datetime(end)
+
+                batch = self.retrieve_data(instrument, batch_start, batch_end,
                                            granularity, price)
                 data = data.append(batch)
         else:
