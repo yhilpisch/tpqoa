@@ -24,9 +24,6 @@ Using `pip` in combination with `Github`:
 
     pip install git+git://github.com/yhilpisch/tpqoa
 
-Using `pip` directly:
-
-    pip install --index-url https://test.pypi.org/simple/ tpqoa
 
 ## Connection
 
