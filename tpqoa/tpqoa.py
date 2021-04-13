@@ -27,12 +27,15 @@
 # It comes with no warranties or representations,
 # to the extent permitted by applicable law.
 #
+import os
 import v20
 import json
 import configparser
 import pandas as pd
 from v20.transaction import StopLossDetails, ClientExtensions
 from v20.transaction import TrailingStopLossDetails, TakeProfitDetails
+
+MAX_REQUEST_COUNT = float(os.getenv("MAX_PRICE_COUNT", 5000))
 
 
 class tpqoa(object):
@@ -156,20 +159,19 @@ class tpqoa(object):
             pandas DataFrame object with data
         '''
         if granularity.startswith('S') or granularity.startswith('M'):
+            multiplier = float("".join(filter(str.isdigit, granularity)))
             if granularity.startswith('S'):
-                freq = '1h'
+                freq = f"{int(MAX_REQUEST_COUNT * multiplier / float(3600))}H"
             else:
-                freq = 'D'
+                freq = f"{int(MAX_REQUEST_COUNT * multiplier / float(1440))}D"
             data = pd.DataFrame()
             dr = pd.date_range(start, end, freq=freq)
-
             for t in range(len(dr)):
                 batch_start = self.transform_datetime(dr[t])
                 if t != len(dr) - 1:
                     batch_end = self.transform_datetime(dr[t + 1])
                 else:
                     batch_end = self.transform_datetime(end)
-
                 batch = self.retrieve_data(instrument, batch_start, batch_end,
                                            granularity, price)
                 data = data.append(batch)
