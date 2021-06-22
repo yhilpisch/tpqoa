@@ -425,7 +425,7 @@ class tpqoa(object):
         transactions = self.get_transactions(tid)
         for trans in transactions:
             try:
-                templ = '%4s | %s | %7s | s | %8s'
+                templ = '%4s | %s | %7s | %8s | %8s'
                 print(templ % (trans['id'],
                                trans['time'][:-8],
                                trans['instrument'],
