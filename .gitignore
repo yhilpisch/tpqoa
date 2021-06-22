@@ -1,6 +1,6 @@
 # Specifics
-*.cfg
 *.swp
+*.cfg
 _build/
 .DS_Store
 
