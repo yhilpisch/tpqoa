@@ -11,7 +11,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='tpqoa',
-      version='0.0.53',
+      version='0.0.54',
       description='tpqoa Algorithmic Trading with Oanda',
       long_description=long_description,
       long_description_content_type='text/markdown',

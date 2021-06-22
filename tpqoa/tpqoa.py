@@ -27,12 +27,67 @@
 # It comes with no warranties or representations,
 # to the extent permitted by applicable law.
 #
-import v20
-import json
+import _thread
 import configparser
+import json
+import signal
+import threading
+from time import sleep
+
 import pandas as pd
+import v20
 from v20.transaction import StopLossDetails, ClientExtensions
 from v20.transaction import TrailingStopLossDetails, TakeProfitDetails
+
+MAX_REQUEST_COUNT = float(5000)
+
+
+class Job(threading.Thread):
+    def __init__(self, job_callable, args=None):
+        threading.Thread.__init__(self)
+        self.callable = job_callable
+        self.args = args
+
+        # The shutdown_flag is a threading.Event object that
+        # indicates whether the thread should be terminated.
+        self.shutdown_flag = threading.Event()
+        self.job = None
+        self.exception = None
+
+    def run(self):
+        print('Thread #%s started' % self.ident)
+        try:
+            self.job = self.callable
+            while not self.shutdown_flag.is_set():
+                print("Starting job loop...")
+                if self.args is None:
+                    self.job()
+                else:
+                    self.job(self.args)
+        except Exception as e:
+            import sys
+            import traceback
+            print(traceback.format_exc())
+            self.exception = e
+            _thread.interrupt_main()
+
+
+class ServiceExit(Exception):
+    """
+    Custom exception which is used to trigger the clean exit
+    of all running threads and the main program.
+    """
+
+    def __init__(self, message=None):
+        self.message = message
+
+    def __repr__(self):
+        return repr(self.message)
+
+
+def service_shutdown(signum, frame):
+    print('exiting ...')
+    raise ServiceExit
 
 
 class tpqoa(object):
@@ -156,10 +211,13 @@ class tpqoa(object):
             pandas DataFrame object with data
         '''
         if granularity.startswith('S') or granularity.startswith('M'):
+            multiplier = float("".join(filter(str.isdigit, granularity)))
             if granularity.startswith('S'):
-                freq = '1h'
+                # freq = '1h'
+                freq = f"{int(MAX_REQUEST_COUNT * multiplier / float(3600))}H"
             else:
-                freq = 'D'
+                # freq = 'D'
+                freq = f"{int(MAX_REQUEST_COUNT * multiplier / float(1440))}D"
             data = pd.DataFrame()
             dr = pd.date_range(start, end, freq=freq)
 
@@ -253,16 +311,24 @@ class tpqoa(object):
                 trailingStopLossOnFill=tsl_details,
                 takeProfitOnFill=tp_details
             )
-        try:
+
+        # First checking if the order is rejected
+        if 'orderRejectTransaction' in request.body:
+            order = request.get('orderRejectTransaction')
+        elif 'orderFillTransaction' in request.body:
             order = request.get('orderFillTransaction')
-        except Exception:
+        elif 'orderCreateTransaction' in request.body:
             order = request.get('orderCreateTransaction')
-        if not suppress:
+        else:
+            # This case does not happen.  But keeping this for completeness.
+            order = None
+
+        if not suppress and order is not None:
             print('\n\n', order.dict(), '\n')
         if ret is True:
-            return order.dict()
+            return order.dict() if order is not None else None
 
-    def stream_data(self, instrument, stop=None, ret=False):
+    def stream_data(self, instrument, stop=None, ret=False, callback=None):
         ''' Starts a real-time data stream.
 
         Parameters
@@ -282,9 +348,14 @@ class tpqoa(object):
             if msg_type == 'pricing.ClientPrice':
                 self.ticks += 1
                 self.time = msg.time
-                self.on_success(msg.time,
-                                float(msg.bids[0].dict()['price']),
-                                float(msg.asks[0].dict()['price']))
+                if callback is not None:
+                    callback(msg.instrument, msg.time,
+                             float(msg.bids[0].dict()['price']),
+                             float(msg.asks[0].dict()['price']))
+                else:
+                    self.on_success(msg.time,
+                                    float(msg.bids[0].dict()['price']),
+                                    float(msg.asks[0].dict()['price']))
                 if stop is not None:
                     if self.ticks >= stop:
                         if ret:
@@ -294,6 +365,34 @@ class tpqoa(object):
                 if ret:
                     return msgs
                 break
+
+    def _stream_data_failsafe_thread(self, args):
+        try:
+            print("Starting price streaming")
+            self.stream_data(args[0], callback=args[1])
+        except Exception as e:
+            import sys
+            import traceback
+            print(traceback.format_exc())
+            sleep(3)
+            return
+
+    def stream_data_failsafe(self, instrument, callback=None):
+        signal.signal(signal.SIGTERM, service_shutdown)
+        signal.signal(signal.SIGINT, service_shutdown)
+        signal.signal(signal.SIGSEGV, service_shutdown)
+        try:
+            price_stream_thread = Job(self._stream_data_failsafe_thread,
+                                      [instrument, callback])
+            price_stream_thread.start()
+            return price_stream_thread
+        except ServiceExit as e:
+            print('Handling exception')
+            import sys
+            import traceback
+            print(traceback)
+            price_stream_thread.shutdown_flag.set()
+            price_stream_thread.join()
 
     def on_success(self, time, bid, ask):
         ''' Method called when new data is retrieved. '''
@@ -326,7 +425,7 @@ class tpqoa(object):
         transactions = self.get_transactions(tid)
         for trans in transactions:
             try:
-                templ = '%4s | %s | %7s | %12s | %8s'
+                templ = '%4s | %s | %7s | s | %8s'
                 print(templ % (trans['id'],
                                trans['time'][:-8],
                                trans['instrument'],
