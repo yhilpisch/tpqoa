@@ -210,7 +210,8 @@ class tpqoa(object):
         data: pd.DataFrame
             pandas DataFrame object with data
         '''
-        if granularity.startswith('S') or granularity.startswith('M'):
+        if granularity.startswith('S') or granularity.startswith('M') \
+            or granularity.startswith('H'):
             multiplier = float("".join(filter(str.isdigit, granularity)))
             if granularity.startswith('S'):
                 # freq = '1h'
