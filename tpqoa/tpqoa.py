@@ -211,7 +211,7 @@ class tpqoa(object):
             pandas DataFrame object with data
         '''
         if granularity.startswith('S') or granularity.startswith('M') \
-            or granularity.startswith('H'):
+                or granularity.startswith('H'):
             multiplier = float("".join(filter(str.isdigit, granularity)))
             if granularity.startswith('S'):
                 # freq = '1h'
@@ -231,7 +231,7 @@ class tpqoa(object):
 
                 batch = self.retrieve_data(instrument, batch_start, batch_end,
                                            granularity, price)
-                data = data.append(batch)
+                data = pd.concat([data, batch])
         else:
             start = self.transform_datetime(start)
             end = self.transform_datetime(end)
