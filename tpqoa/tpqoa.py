@@ -179,7 +179,7 @@ class tpqoa(object):
                 cs.update(cs['mid'])
                 del cs['mid']
         else:
-            raise ValueError("price must be either 'B', 'A' or 'M'.")
+            raise ValueError("Price must be either 'B', 'A' or 'M'.")
         if len(raw) == 0:
             return pd.DataFrame()  # return empty DataFrame if no data
         data = pd.DataFrame(raw)
@@ -321,7 +321,7 @@ class tpqoa(object):
         elif 'orderCreateTransaction' in request.body:
             order = request.get('orderCreateTransaction')
         else:
-            # This case does not happen.  But keeping this for completeness.
+            # This case does not happen. But keeping this for completeness.
             order = None
 
         if not suppress and order is not None:
@@ -440,3 +440,14 @@ class tpqoa(object):
         response = self.ctx.position.list_open(self.account_id).body
         positions = [p.dict() for p in response.get('positions')]
         return positions
+    
+    def cancel_order(self, order_id):
+        ''' Cancels an order (e.g. SL order).
+
+        Parameters
+        ==========
+        order_id: int
+            valid order id
+        '''
+        response = self.ctx.order.cancel(self.account_id, order_id)
+        return json.loads(response.raw_body)
